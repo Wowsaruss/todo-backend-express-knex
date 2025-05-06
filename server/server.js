@@ -3,6 +3,8 @@ const routes = require('./server-routes.js');
 
 const port = process.env.PORT || 5000;
 
+app.post('/users', routes.postUser);
+
 app.get('/', routes.getAllTodos);
 app.get('/:id', routes.getTodo);
 

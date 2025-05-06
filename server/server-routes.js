@@ -1,5 +1,16 @@
 const _ = require('lodash');
 const todos = require('./database/todo-queries.js');
+const users = require('./database/user-queries.js');
+const { password } = require('pg/lib/defaults.js');
+
+function createUser(req, data) {
+  return {
+    first_name: data.first_name,
+    last_name: data.last_name,
+    email: data.email,
+    password: data.password
+  };
+}
 
 function createToDo(req, data) {
   const protocol = req.protocol, 
@@ -22,6 +33,11 @@ async function getAllTodos(req, res) {
 async function getTodo(req, res) {
   const todo = await todos.get(req.params.id);
   return res.send(todo);
+}
+
+async function postUser(req, res) {
+  const created = await users.create(req.body.first_name, req.body.last_name, req.body.email, req.body.password);
+  return res.send(createUser(req, created));
 }
 
 async function postTodo(req, res) {
@@ -60,6 +76,7 @@ function addErrorReporting(func, message) {
 const toExport = {
     getAllTodos: { method: getAllTodos, errorMessage: "Could not fetch all todos" },
     getTodo: { method: getTodo, errorMessage: "Could not fetch todo" },
+    postUser: { method: postUser, errorMessage: "Could not post user" },
     postTodo: { method: postTodo, errorMessage: "Could not post todo" },
     patchTodo: { method: patchTodo, errorMessage: "Could not patch todo" },
     deleteAllTodos: { method: deleteAllTodos, errorMessage: "Could not delete all todos" },
